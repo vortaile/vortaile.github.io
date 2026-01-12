@@ -1,0 +1,294 @@
+<!DOCTYPE html><html lang="en" data-theme="dark"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>UofTCTF 2026 Forensics Writeups | Vortaile's Blog</title><meta name="author" content="Vortaile"><meta name="copyright" content="Vortaile"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#0B0614"><meta name="description" content="Write-ups for all Forensics challenges I solved during UofTCTF 2026.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UofTCTF 2026 Forensics Writeups">
+<meta property="og:url" content="https://vortaile.github.io/2026/01/12/UofTCTF-2026-Forensics-Writeups/">
+<meta property="og:site_name" content="Vortaile&#39;s Blog">
+<meta property="og:description" content="Write-ups for all Forensics challenges I solved during UofTCTF 2026.">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://vortaile.github.io/2026/01/12/UofTCTF-2026-Forensics-Writeups/uoftctf_logo_3000.webp">
+<meta property="article:published_time" content="2026-01-12T12:44:29.000Z">
+<meta property="article:modified_time" content="2026-01-12T16:20:05.440Z">
+<meta property="article:author" content="Vortaile">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Cyber Security">
+<meta property="article:tag" content="Digital Forensics">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://vortaile.github.io/2026/01/12/UofTCTF-2026-Forensics-Writeups/uoftctf_logo_3000.webp"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "UofTCTF 2026 Forensics Writeups",
+  "url": "https://vortaile.github.io/2026/01/12/UofTCTF-2026-Forensics-Writeups/",
+  "image": "https://vortaile.github.io/2026/01/12/UofTCTF-2026-Forensics-Writeups/uoftctf_logo_3000.webp",
+  "datePublished": "2026-01-12T12:44:29.000Z",
+  "dateModified": "2026-01-12T16:20:05.440Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Vortaile",
+      "url": "https://vortaile.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/avatar.webp"><link rel="canonical" href="https://vortaile.github.io/2026/01/12/UofTCTF-2026-Forensics-Writeups/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.3"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css" media="print" onload="this.media='all'"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0B0614')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"No results found for: ${query}","hits_stats":"${hits} articles found"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":true,"highlightMacStyle":true},
+  copy: {
+    success: 'Copy Successful',
+    error: 'Copy Failed',
+    noSupport: 'Browser Not Supported'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: 'Just now',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: {"chs_to_cht":"You have switched to Traditional Chinese","cht_to_chs":"You have switched to Simplified Chinese","day_to_night":"You have switched to Dark Mode","night_to_day":"You have switched to Light Mode","bgLight":"#49b1f5","bgDark":"#1f1f1f","position":"bottom-center"},
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: 'Load More'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'UofTCTF 2026 Forensics Writeups',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.1.1"><link rel="alternate" href="/atom.xml" title="Vortaile's Blog" type="application/atom+xml">
+</head><body><div class="bg-animation" id="web_bg" style="background-image: url(https://4kwallpapers.com/images/walls/thumbs_3t/8751.jpg);"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">2</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">2</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> About</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Links</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/2026/01/12/UofTCTF-2026-Forensics-Writeups/forensics_uoftctf.webp);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><img class="site-icon" src="/img/avatar.webp" alt="Logo"><span class="site-name">Vortaile's Blog</span></a><a class="nav-page-title" href="/"><span class="site-name">UofTCTF 2026 Forensics Writeups</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  Back to Home</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> About</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> Categories</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> Tags</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> Links</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">UofTCTF 2026 Forensics Writeups</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2026-01-12T12:44:29.000Z" title="Created 2026-01-12 19:44:29">2026-01-12</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2026-01-12T16:20:05.440Z" title="Updated 2026-01-12 23:20:05">2026-01-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Writeups/">Writeups</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-wordcount"><i class="far fa-file-word fa-fw post-meta-icon"></i><span class="post-meta-label">Word Count:</span><span class="word-count">1.5k</span><span class="post-meta-separator">|</span><i class="far fa-clock fa-fw post-meta-icon"></i><span class="post-meta-label">Reading Time:</span><span>9mins</span></span><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post Views:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="TL-DR"><a href="#TL-DR" class="headerlink" title="TL;DR"></a>TL;DR</h2><p>Our team <strong>Nusahack</strong> participated in <strong>UofTCTF 2026</strong>, and I managed to solve <strong>all Forensics challenges</strong> during the competition (that was fun, ngl 🤓). This post contains my writeups covering both <strong>basic network traffic analysis</strong> and <strong>printer&#x2F;image forensics for TCG card</strong>, focusing on practical investigative techniques.</p>
+<hr>
+<h2 id="Baby-Exfil"><a href="#Baby-Exfil" class="headerlink" title="Baby Exfil"></a>Baby Exfil</h2><h3 id="Challenge-Info"><a href="#Challenge-Info" class="headerlink" title="Challenge Info"></a>Challenge Info</h3><ul>
+<li><strong>Category:</strong> Digital Forensics  </li>
+<li><strong>Points:</strong> 36  </li>
+<li><strong>Solves:</strong> 463  </li>
+<li><strong>Author:</strong> 0x157  </li>
+<li><strong>File:</strong> <code>final.pcapng</code></li>
+</ul>
+<h3 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h3><p>Team K&amp;K has identified suspicious network activity on their machine. Fearing that a competing team may be attempting to steal confidential data through underhanded means, they need your help analyzing the network logs to uncover the truth.</p>
+<h3 id="Analysis"><a href="#Analysis" class="headerlink" title="Analysis"></a>Analysis</h3><p>The challenge gives us a <strong>pcap file</strong>.</p>
+<p>From the description, there’s a clear keyword: <strong>steal data (data exfiltration)</strong>. Instead of manually inspecting packets one by one, it makes more sense to <strong>export HTTP objects directly using wireshark</strong> from the pcap to see what kind of data is being exfiltrated.</p>
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/http_object_export.webp" class="" title="HTTP object export">
+
+<p>Why HTTP? Because:</p>
+<ul>
+<li>HTTP has clear <strong>methods</strong> like <code>GET</code> and <code>POST</code></li>
+<li>A lot of <strong>stealer malware communicates over HTTP</strong></li>
+<li>This is a <em>baby</em> challenge, so it’s unlikely to be overly complex :v</li>
+</ul>
+<p>After exporting HTTP objects in Wireshark, we can immediately spot the <strong>malicious payload</strong>. The payload itself was generated using <strong>Python</strong>, and alongside it, there are multiple files stolen from the victim’s desktop.</p>
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/malicious_instance.webp" class="" title="malicious instance">
+
+<p>By analyzing the extracted payload, we can see that it is a simple Python-based stealer script. The script recursively walks through the victim’s desktop directory, searching for files with common document and image extensions. Each file is read in binary form and encrypted using a repeating-key XOR scheme before being converted into a hex string. The encrypted data is then exfiltrated to a remote server via an HTTP POST request, blending the malicious traffic into normal-looking web uploads. This explains why multiple encrypted blobs appear in the HTTP objects and confirms that the challenge revolves around basic data exfiltration rather than advanced obfuscation techniques.</p>
+<p>These stolen files are <strong>XOR-encrypted</strong>.</p>
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/http_hex_raw.webp" class="" title="raw hex">
+
+<p>Since XOR is reversible, we can recover the original files by:</p>
+<ul>
+<li>Extracting the <strong>raw HTTP data</strong></li>
+<li>Decrypting the hex string using the XOR key found inside the payload</li>
+</ul>
+<p>The XOR key used is:<br><code>G0G0Squ1d3Ncrypt10n</code></p>
+<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><figure class="highlight python"><figcaption><span>[solver]</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> glob, re, os</span><br><span class="line"></span><br><span class="line">key = <span class="string">b&quot;G0G0Squ1d3Ncrypt10n&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">xor</span>(<span class="params">data, key</span>):</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">bytes</span>([data[i] ^ key[i % <span class="built_in">len</span>(key)] <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(data))])</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> fname <span class="keyword">in</span> glob.glob(<span class="string">&quot;upload*&quot;</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(fname, <span class="string">&quot;r&quot;</span>, errors=<span class="string">&quot;ignore&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        data = f.read()</span><br><span class="line"></span><br><span class="line">    data = data.replace(<span class="string">&quot;\r\n&quot;</span>, <span class="string">&quot;\n&quot;</span>)  <span class="comment"># jaga-jaga newline windows</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># ambil filename asli dari header (kalo ada)</span></span><br><span class="line">    m = re.search(<span class="string">r&#x27;filename=&quot;([^&quot;]+)&quot;&#x27;</span>, data)</span><br><span class="line">    outname = m.group(<span class="number">1</span>) <span class="keyword">if</span> m <span class="keyword">else</span> <span class="string">f&quot;recovered_<span class="subst">&#123;fname&#125;</span>.bin&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># ambil hex payload paling panjang (ini yang beneran file korban)</span></span><br><span class="line">    cands = re.findall(<span class="string">r&quot;[0-9a-fA-F]&#123;200,&#125;&quot;</span>, data)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> cands:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;[-] <span class="subst">&#123;fname&#125;</span>: ga nemu hex payload&quot;</span>)</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    hex_data = <span class="built_in">max</span>(cands, key=<span class="built_in">len</span>)</span><br><span class="line"></span><br><span class="line">    encrypted = <span class="built_in">bytes</span>.fromhex(hex_data)</span><br><span class="line">    decrypted = xor(encrypted, key)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(outname, <span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(decrypted)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;[+] <span class="subst">&#123;fname&#125;</span> -&gt; <span class="subst">&#123;outname&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>The idea of the solver is simple:</p>
+<ol>
+<li>Read each exported <code>upload*</code> file as text</li>
+<li>Extract the <strong>largest hex-encoded blob</strong>, which corresponds to the actual encrypted file content</li>
+<li>Convert the hex string back into raw bytes</li>
+<li>Decrypt it using XOR with the known key</li>
+<li>Recover the original stolen file</li>
+</ol>
+<p>The script also tries to recover the <strong>original filename</strong> from the HTTP headers (if present). If a filename can’t be found, it falls back to a generic name.</p>
+<p>Since XOR is reversible, applying the same operation again with the same key gives us back the original file contents.</p>
+<p>After running the script, the stolen files are successfully recovered.<br>Among the decrypted outputs, the flag can be found inside the file named: <code>HNderw.png</code></p>
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/solved.webp" class="" title="solved">
+
+<h3 id="Flag"><a href="#Flag" class="headerlink" title="Flag"></a>Flag</h3><p><code>uoftctf&#123;b4by_w1r3sh4rk_an4lys1s&#125;</code> </p>
+<hr>
+<h2 id="My-Pokemon-Card-is-Fake"><a href="#My-Pokemon-Card-is-Fake" class="headerlink" title="My Pokemon Card is Fake!"></a>My Pokemon Card is Fake!</h2><h3 id="Challenge-Info-1"><a href="#Challenge-Info-1" class="headerlink" title="Challenge Info"></a>Challenge Info</h3><ul>
+<li><strong>Category:</strong> Digital Forensics  </li>
+<li><strong>Points:</strong> 64  </li>
+<li><strong>Solves:</strong> 101</li>
+<li><strong>Author:</strong> levu12  </li>
+<li><strong>File:</strong> <code>Zard.jpg</code></li>
+</ul>
+<h3 id="Description-1"><a href="#Description-1" class="headerlink" title="Description"></a>Description</h3><p>Han Shangyan noticed that recently, Tong Nian has been getting into Pokemon cards. So, what could be a better present than a literal prototype for the original Charizard? Not only that, it has been authenticated and graded a PRISTINE GEM MINT 10 by CGC!!!</p>
+<p>Han Shangyan was able to talk the seller down to a modest 6-7 figure sum (not kidding btw), but when he got home, he had an uneasy feeling for some reason. Can you help him uncover the secrets that lie behind these cards?</p>
+<p>What you will need to find:</p>
+<p>Date and time (relative to the printer, and 24-hour clock) that it was printed.</p>
+<p>Printer’s serial number.</p>
+<p>The flag format will be <code>uoftctf&#123;YYYY_MM_DD_HH:MM_SERIALNUM&#125;</code></p>
+<p>Example: <code>uoftctf&#123;9999_09_09_23:59_676767676&#125;</code></p>
+<h3 id="Notes"><a href="#Notes" class="headerlink" title="Notes"></a>Notes</h3><ol>
+<li>You’re free to dig more into the whole situation after you’ve solved the challenge, it’s very interesting, though so much hasn’t been or can’t be said :(</li>
+<li>Two days after I write this challenge, I’m going to meet the person whose name was used for all this again. Hopefully I’ll be back to respond to tickets!!!</li>
+</ol>
+<h3 id="Analysis-1"><a href="#Analysis-1" class="headerlink" title="Analysis"></a>Analysis</h3><p>The challenge starts off in a very unusual way: instead of giving us logs, binaries, or packet captures, we are handed a single image file <code>Zard.jpg</code>. The image shows what is claimed to be a prototype Pokémon Charizard card from 1996, professionally graded and sealed by CGC.</p>
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/Zard.webp" class="" title="Zard.jpg">
+
+<p>At first glance, everything looks convincing. The artwork matches early Pokémon designs, the Japanese text seems authentic, and the slab gives the card an added sense of legitimacy. Nothing immediately screams “fake.”</p>
+<p>However, the description hints that something feels off. This pushes us to think beyond surface-level inspection and approach the problem from a digital forensics perspective.</p>
+<p>What made this challenge particularly exciting for me is that I had never worked with Pokémon cards or TCGs before. That unfamiliarity actually made the challenge more fun, it felt like learning something entirely new while still applying forensic techniques I was already familiar with. Instead of parsing binaries or reversing malware, I was suddenly dealing with physical-world artifacts translated into a digital image.</p>
+<p>The key question becomes:</p>
+<p>If this card truly dates back to 1996, is there any modern artifact that should not be present?</p>
+<p>At this point, I stopped thinking about Pokemon cards and started thinking about printing technology. A card like this has to be printed at some stage, and modern printers are known to leave behind subtle forensic traces.</p>
+<p>If this image was produced using a modern printer, it might accidentally carry artifacts that simply did not exist in the 1990s.</p>
+<p>This realization naturally led me to printer forensics.</p>
+<h3 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution"></a>Solution</h3><p>At this point, I began searching online for prior research related to Pokemon cards and forensic printing artifacts. This led me to an article on Elite Fourum titled:<br><strong>“Yellow Dot Decoder – Fake Prototype Playtest Cards”</strong></p>
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/elitefourum.webp" class="" title="elitefourum.com">
+
+<p>The article explains how many fake Pokémon prototype cards were produced using modern color laser printers, which embed yellow tracking dots into printed materials. These dots are:</p>
+<ul>
+<li>Nearly invisible to the naked eye</li>
+<li>Arranged in a repeating grid</li>
+<li>Capable of encoding metadata such as:<ul>
+<li>Printing date and time</li>
+<li>Printer serial number</li>
+</ul>
+</li>
+</ul>
+<p>Reading this article was a turning point. It confirmed that this was not just a theoretical idea, the exact same forensic technique had already been used to expose fake prototype cards in the real world.</p>
+<p>Armed with this knowledge, I returned to the image with a clear plan: try to reveal and decode any embedded yellow tracking dots.</p>
+<p>I opened the image in GIMP, which provides precise control over color channels.</p>
+<p>Instead of adjusting brightness or contrast blindly, the goal was to isolate the color information most likely to expose yellow dots:<br><code>Colors → Components → Extract Component</code></p>
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/extract_components.webp" class="" title="extract_components">
+
+<p>Here, the RGB Blue channel was selected.</p>
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/RGB_blue.webp" class="" title="RGB_blue">
+
+<p>This choice is intentional. In the RGB color model, yellow is the opposite of blue, meaning yellow elements stand out most clearly when the blue channel is isolated. Immediately after extraction, faint but structured dot-like patterns began to appear.</p>
+<p>However, the dots were still partially obscured by background texture from the card.</p>
+<p>To make the dots readable, additional enhancement was required:<br><code>Colors → Levels</code></p>
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/adjust_color.webp" class="" title="adjust colors">
+
+<p>The following adjustments were made:</p>
+<ul>
+<li>Input Levels: The black point was shifted to the right to suppress background noise.</li>
+<li>Output Levels: Slight compression to increase contrast.</li>
+</ul>
+<p>After fine-tuning these values, the background flattened into uniform gray, while a clear grid of yellow tracking dots emerged. At this point, there was no longer any ambiguity the image definitely contained printer tracking dots.</p>
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/analysis_bnw_dots.webp" class="" title="bnw dots">
+
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/analysis_yellow_dots.webp" class="" title="yellow dots">
+
+<p>With the dot pattern clearly visible, the next step was decoding it.</p>
+<img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/yellow_dots.webp" class="" title="yellow dots decoder">
+
+<p>Using the Yellow Dot Decoder tool referenced in the Elite Fourum article, the dot grid was manually transcribed and decoded. The decoder successfully extracted the embedded printer metadata:</p>
+<ul>
+<li>Date: 2024-08-06</li>
+<li>Time: 21:49</li>
+<li>Printer Serial Number: 704641508</li>
+</ul>
+<p>This conclusively proves that the card was printed in 2024 using a modern printer, making it impossible for it to be a genuine 1996 prototype.</p>
+<h3 id="Flag-1"><a href="#Flag-1" class="headerlink" title="Flag"></a>Flag</h3><p><code>uoftctf&#123;2024_08_06_21:49_704641508&#125;</code></p>
+<h3 id="References"><a href="#References" class="headerlink" title="References"></a>References</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://www.elitefourum.com/t/yellow-dot-decoder-fake-prototype-playtest-cards/52472">Yellow Dot Decoder - Fake Prototype Playtest Cards (Elite Fourum)</a></li>
+</ul>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>Author: </span><span class="post-copyright-info"><a href="https://vortaile.github.io">Vortaile</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>Link: </span><span class="post-copyright-info"><a href="https://vortaile.github.io/2026/01/12/UofTCTF-2026-Forensics-Writeups/">https://vortaile.github.io/2026/01/12/UofTCTF-2026-Forensics-Writeups/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>Copyright Notice: </span><span class="post-copyright-info">All articles on this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless otherwise stated.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/CTF/">CTF</a><a class="post-meta__tags" href="/tags/Digital-Forensics/">Digital Forensics</a><a class="post-meta__tags" href="/tags/Cyber-Security/">Cyber Security</a></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/12/30/Why-I-Use-Vortaile-as-My-Nickname/" title="Why I Use Vortaile as My Nickname"><img class="cover" src="https://www.factinate.com/storage/app/media/factinate/2018/08/Voltaire-Internal.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">Next</div><div class="info-item-2">Why I Use Vortaile as My Nickname</div></div><div class="info-2"><div class="info-item-1"> Why “Vortaile”?Vortaile is a nickname I chose as a small tribute to Voltaire (François-Marie Arouet, 1694–1778) was one of the most influential writers of the French Enlightenment. He was known for his sharp wit, relentless criticism of religious intolerance, and his advocacy for civil liberties — especially freedom of speech, freedom of religion, and the separation of church and state. He wrote across almost every genre (plays, poems, essays, histories, and satire), producing thousands of w...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.webp" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Vortaile</div><div class="author-info-description"></div><div class="site-data"><a href="/archives/"><div class="headline">Articles</div><div class="length-num">2</div></a><a href="/tags/"><div class="headline">Tags</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">Categories</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://instagram.com/arizhawk"><i class="fab fa-instagram"></i><span>Follow</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/vortaile" target="_blank" title="GitHub"><i class="fab fa-github"></i></a><a class="social-icon" href="https://linkedin.com/in/arizha" target="_blank" title="LinkedIn"><i class="fab fa-linkedin"></i></a></div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>Contents</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#TL-DR"><span class="toc-number">1.</span> <span class="toc-text">TL;DR</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Baby-Exfil"><span class="toc-number">2.</span> <span class="toc-text">Baby Exfil</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Challenge-Info"><span class="toc-number">2.1.</span> <span class="toc-text">Challenge Info</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Description"><span class="toc-number">2.2.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Analysis"><span class="toc-number">2.3.</span> <span class="toc-text">Analysis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution"><span class="toc-number">2.4.</span> <span class="toc-text">Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag"><span class="toc-number">2.5.</span> <span class="toc-text">Flag</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#My-Pokemon-Card-is-Fake"><span class="toc-number">3.</span> <span class="toc-text">My Pokemon Card is Fake!</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Challenge-Info-1"><span class="toc-number">3.1.</span> <span class="toc-text">Challenge Info</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Description-1"><span class="toc-number">3.2.</span> <span class="toc-text">Description</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Notes"><span class="toc-number">3.3.</span> <span class="toc-text">Notes</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Analysis-1"><span class="toc-number">3.4.</span> <span class="toc-text">Analysis</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution-1"><span class="toc-number">3.5.</span> <span class="toc-text">Solution</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Flag-1"><span class="toc-number">3.6.</span> <span class="toc-text">Flag</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#References"><span class="toc-number">3.7.</span> <span class="toc-text">References</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Posts</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2026/01/12/UofTCTF-2026-Forensics-Writeups/" title="UofTCTF 2026 Forensics Writeups"><img src="/2026/01/12/UofTCTF-2026-Forensics-Writeups/uoftctf_logo_3000.webp" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="UofTCTF 2026 Forensics Writeups"/></a><div class="content"><a class="title" href="/2026/01/12/UofTCTF-2026-Forensics-Writeups/" title="UofTCTF 2026 Forensics Writeups">UofTCTF 2026 Forensics Writeups</a><time datetime="2026-01-12T12:44:29.000Z" title="Created 2026-01-12 19:44:29">2026-01-12</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/12/30/Why-I-Use-Vortaile-as-My-Nickname/" title="Why I Use Vortaile as My Nickname"><img src="https://www.factinate.com/storage/app/media/factinate/2018/08/Voltaire-Internal.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Why I Use Vortaile as My Nickname"/></a><div class="content"><a class="title" href="/2025/12/30/Why-I-Use-Vortaile-as-My-Nickname/" title="Why I Use Vortaile as My Nickname">Why I Use Vortaile as My Nickname</a><time datetime="2025-12-29T21:43:11.869Z" title="Created 2025-12-30 04:43:11">2025-12-30</time></div></div></div></div></div></div></main><footer id="footer" style="background-image: url(/2026/01/12/UofTCTF-2026-Forensics-Writeups/forensics_uoftctf.webp);"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Vortaile</span><span class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Reading Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Toggle Between Light and Dark Mode"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="Toggle Between Single-column and Double-column"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="Settings"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back to Top"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.3"></script><script src="/js/main.js?v=5.5.3"></script><script src="https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">Search</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  Loading Database</span></div><div class="local-search-input"><input placeholder="Search..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.3"></script></div></div></body></html>
