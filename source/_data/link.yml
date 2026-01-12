@@ -1,0 +1,35 @@
+- class_name: CTF Team
+  class_desc:
+  link_list:
+    - name: CCUG
+      link: https://ccug.gunadarma.ac.id/
+      avatar: https://ctf.ccug.gunadarma.ac.id/files/a3974c99c3ed82b714eab45c530ff41e/Logo2_Shadow.png
+      descr: Cyber Commnunity Universitas Gunadarma
+    - name: Nusahack
+      link: https://chjwoo.vercel.app/project/nusahack
+      avatar: https://chjwoo.vercel.app/_astro/nusahack-logo.CaGx5nfX_2iXcbm.webp
+      descr: Komunitas Cybersecurity & CTF di Indonesia. Tempat belajar, diskusi, dan mabar CTF bareng.
+
+- class_name: CTF Friends
+  class_desc:
+  link_list:
+    - name: chjwoo
+      link: https://chjwoo.vercel.app
+      avatar: https://media1.tenor.com/m/juxuFY7b89UAAAAd/jiwoo-hearts2hearts.gif
+      descr: web & rev 
+
+# - class_name: Websites
+#   class_desc: Recommended websites
+#   link_list:
+#     - name: Youtube
+#       link: https://www.youtube.com/
+#       avatar: https://i.loli.net/2020/05/14/9ZkGg8v3azHJfM1.png
+#       descr: Video-sharing website
+#     - name: Weibo
+#       link: https://www.weibo.com/
+#       avatar: https://i.loli.net/2020/05/14/TLJBum386vcnI1P.png
+#       descr: China's largest social sharing platform
+#     - name: Twitter
+#       link: https://twitter.com/
+#       avatar: https://i.loli.net/2020/05/14/5VyHPQqR6LWF39a.png
+#       descr: Social sharing platform
