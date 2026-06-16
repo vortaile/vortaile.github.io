@@ -13,7 +13,7 @@ top_img: forensics_uoftctf.webp
 cover: uoftctf_logo_3000.webp
 ---
 
-## TL;DR
+> **TL;DR**
 Our team **Nusahack** participated in **UofTCTF 2026**, and I managed to solve **all Forensics challenges** during the competition (that was fun, ngl 🤓). This post contains my writeups covering both **basic network traffic analysis** and **printer/image forensics for TCG card**, focusing on practical investigative techniques.
 
 ---

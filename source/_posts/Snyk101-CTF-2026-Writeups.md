@@ -1,5 +1,5 @@
 ---
-title: "Hacking AI, Pickles & Prototypes — Snyk101 AI Security Engineer CTF 2026"
+title: "Hacking AI, Pickles & Prototypes - Snyk101 AI Security Engineer CTF 2026"
 categories:
   - Writeups
 tags:
@@ -10,12 +10,12 @@ tags:
   - Prompt Injection
 toc: true
 date: 2026-06-16 22:00:00
-description: Full writeup from Zoom Community Rally #1 FanZone — solving all 3 Snyk101 AI Security Engineer CTF challenges: prompt injection on LLM chatbot, prototype pollution in Node.js, and Python pickle deserialization RCE.
+description: Full writeup from Zoom Community Rally #1 FanZone - solving all 3 Snyk101 AI Security Engineer CTF challenges: prompt injection on LLM chatbot, prototype pollution in Node.js, and Python pickle deserialization RCE.
 cover: cover_snykctf-101.webp
 ---
 
 > **TL;DR**
-I participated in **Snyk101 CTF 2026** — part of the **Zoom Community Rally #1 FanZone** event — and managed to solve all three AI Security Engineer challenges. The challenges covered real-world vulnerability classes: **prompt injection** against an LLM-powered chatbot, **prototype pollution** in a Node.js application, and **Python pickle deserialization** leading to RCE. This post walks through my approach for each challenge.
+I participated in **Snyk101 CTF 2026** - part of the **Zoom Community Rally #1 FanZone** event - and managed to solve all three AI Security Engineer challenges. The challenges covered real-world vulnerability classes: **prompt injection** against an LLM-powered chatbot, **prototype pollution** in a Node.js application, and **Python pickle deserialization** leading to RCE. This post walks through my approach for each challenge.
 
 ---
 
@@ -27,9 +27,9 @@ The **Snyk101 CTF 2026** was held as part of the **Zoom Community Rally #1 FanZo
 
 | Challenge | Vulnerability | Key Takeaway |
 |-----------|--------------|--------------|
-| **Sauerkraut** | Python Pickle Deserialization → RCE | Never deserialize untrusted data with `pickle` — use JSON instead |
+| **Sauerkraut** | Python Pickle Deserialization → RCE | Never deserialize untrusted data with `pickle` - use JSON instead |
 | **Invisible Ink** | Prototype Pollution (CVE-2018-16487) | Keep dependencies updated; `lodash@4.17.4` is dangerous |
-| **Grade your Chatbot** | LLM Prompt Injection | Don't put secrets in LLM context — treat prompts as user input |
+| **Grade your Chatbot** | LLM Prompt Injection | Don't put secrets in LLM context - treat prompts as user input |
 
 ---
 
@@ -66,7 +66,7 @@ Invalid base64-encoded string: number of data characters (5) cannot be 1 more th
 
 This reveals two critical facts:
 1. The input is **base64-decoded** before processing.
-2. The decoded payload is likely passed to `pickle.loads()` — consistent with the challenge name "Sauerkraut" (pickled cabbage).
+2. The decoded payload is likely passed to `pickle.loads()` - consistent with the challenge name "Sauerkraut" (pickled cabbage).
 
 **Technology fingerprint:**
 - **Language:** Python (confirmed by error message format)
@@ -96,7 +96,7 @@ When this object is pickled and then unpickled, Python executes `os.system('whoa
 
 ### Exploitation
 
-#### Step 1 — List Server Files
+#### Step 1 - List Server Files
 
 First, we enumerate the filesystem to locate the flag file by crafting a pickle payload that runs `ls -la`:
 
@@ -127,7 +127,7 @@ drwxr-xr-x 3 root root 4096 Mar 21  2023 app
 -rw-r--r-- 1 root root   31 Mar 21  2023 requirements.txt
 ```
 
-#### Step 2 — Read the Flag
+#### Step 2 - Read the Flag
 
 The flag is stored in a file named `flag` (no extension). We modify the payload to run `cat flag`:
 
@@ -163,8 +163,8 @@ SNYK{6854e****}
 | 1 | **Never use `pickle.loads()` on untrusted input.** This is the root cause of the vulnerability. |
 | 2 | **Use safe serialization formats** such as JSON (`json.loads()`) for data exchange. |
 | 3 | **If pickle is required**, use `hmac` signing to verify data integrity before deserialization. |
-| 4 | **Implement sandboxing** — run deserialization in restricted environments with limited system call access. |
-| 5 | **Use allowlists** — restrict which classes can be unpickled via a custom `Unpickler`. |
+| 4 | **Implement sandboxing** - run deserialization in restricted environments with limited system call access. |
+| 5 | **Use allowlists** - restrict which classes can be unpickled via a custom `Unpickler`. |
 
 **Safe alternative:**
 
@@ -172,12 +172,12 @@ SNYK{6854e****}
 import json
 
 # Instead of pickle.loads(user_input)
-data = json.loads(user_input)  # Safe — no code execution
+data = json.loads(user_input)  # Safe - no code execution
 ```
 
 ### References
 
-- [Python Docs: pickle — Warning](https://docs.python.org/3/library/pickle.html)
+- [Python Docs: pickle - Warning](https://docs.python.org/3/library/pickle.html)
 - [OWASP: Deserialization of Untrusted Data](https://owasp.org/www-community/vulnerabilities/Deserialization_of_untrusted_data)
 - [Snyk: Python Pickle Deserialization](https://learn.snyk.io/lesson/insecure-deserialization/)
 
@@ -213,7 +213,7 @@ Inspecting the source code reveals the following critical logic:
 ```javascript
 const _ = require('lodash');  // version 4.17.4
 
-const options = {};           // empty object — inherits from Object.prototype
+const options = {};           // empty object - inherits from Object.prototype
 const flag = fs.readFileSync('./flag', 'utf-8').trim();
 
 app.post('/echo', (req, res) => {
@@ -235,10 +235,10 @@ app.post('/echo', (req, res) => {
 ```
 
 **Key observations:**
-1. **`lodash@4.17.4`** — This version is vulnerable to Prototype Pollution via `_.merge()`.
-2. **`options = {}`** — An empty plain object that inherits from `Object.prototype`.
-3. **`_.merge(out, req.body)`** — User-controlled `req.body` is passed directly to lodash's merge function without sanitization.
-4. **`if (options.flag)`** — The conditional check reads from the prototype chain. If `Object.prototype.flag` is set, `options.flag` will resolve to that value.
+1. **`lodash@4.17.4`** - This version is vulnerable to Prototype Pollution via `_.merge()`.
+2. **`options = {}`** - An empty plain object that inherits from `Object.prototype`.
+3. **`_.merge(out, req.body)`** - User-controlled `req.body` is passed directly to lodash's merge function without sanitization.
+4. **`if (options.flag)`** - The conditional check reads from the prototype chain. If `Object.prototype.flag` is set, `options.flag` will resolve to that value.
 
 ### Vulnerability Analysis
 
@@ -296,13 +296,13 @@ SNYK{6a6a6****}
 | # | Recommendation |
 |---|----------------|
 | 1 | **Upgrade lodash** to version `4.17.21` or later where this vulnerability is patched. |
-| 2 | **Sanitize user input** — strip `__proto__`, `constructor`, and `prototype` keys before merging. |
+| 2 | **Sanitize user input** - strip `__proto__`, `constructor`, and `prototype` keys before merging. |
 | 3 | **Use `Object.create(null)`** for objects that should not inherit from `Object.prototype`. |
-| 4 | **Implement input validation** — reject JSON payloads containing prototype-polluting keys. |
+| 4 | **Implement input validation** - reject JSON payloads containing prototype-polluting keys. |
 
 ### References
 
-- [CVE-2018-16487 — NVD](https://nvd.nist.gov/vuln/detail/CVE-2018-16487)
+- [CVE-2018-16487 - NVD](https://nvd.nist.gov/vuln/detail/CVE-2018-16487)
 - [Snyk: Prototype Pollution in lodash](https://snyk.io/vuln/SNYK-JS-LODASH-450202)
 - [PortSwigger: Prototype Pollution](https://portswigger.net/web-security/prototype-pollution)
 

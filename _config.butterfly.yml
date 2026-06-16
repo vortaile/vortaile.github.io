@@ -69,7 +69,9 @@ avatar:
 disable_top_img: false
 
 # If the banner of page not setting, it will show the default_top_img
-default_top_img: https://4kwallpapers.com/images/walls/thumbs_3t/22996.jpg
+# default_top_img: https://4kwallpapers.com/images/walls/thumbs_3t/22996.jpg
+default_top_img: https://4kwallpapers.com/images/walls/thumbs_3t/20408.jpg
+
 
 # The banner image of index page
 index_img:
@@ -99,7 +101,8 @@ footer_img: true
 # Website Background
 # Can set it to color, image URL or an array containing colors and/or image URLs
 # If an array is provided, a random background will be selected from the array on each load
-background: https://4kwallpapers.com/images/walls/thumbs_3t/8751.jpg
+# background: https://4kwallpapers.com/images/walls/thumbs_3t/8751.jpg
+background: https://4kwallpapers.com/images/walls/thumbs_3t/25389.jpg
 
 cover:
   # Disable the cover or not
