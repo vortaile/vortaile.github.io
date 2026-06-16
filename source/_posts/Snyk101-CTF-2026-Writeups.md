@@ -26,10 +26,10 @@ I participated in **Snyk101 CTF 2026** - part of the **Zoom Community Rally #1 F
 The **Snyk101 CTF 2026** was held as part of the **Zoom Community Rally #1 FanZone**, focusing on real-world AI and web security vulnerabilities. The CTF featured three challenges under the **AI Security Engineer** track, each testing a different attack vector that's increasingly relevant in modern application security:
 
 | Challenge | Vulnerability | Key Takeaway |
-|-----------|--------------|--------------|
-| **Sauerkraut** | Python Pickle Deserialization → RCE | Never deserialize untrusted data with `pickle` - use JSON instead |
-| **Invisible Ink** | Prototype Pollution (CVE-2018-16487) | Keep dependencies updated; `lodash@4.17.4` is dangerous |
-| **Grade your Chatbot** | LLM Prompt Injection | Don't put secrets in LLM context - treat prompts as user input |
+|---|---|---|
+| Sauerkraut | Python Pickle Deserialization → RCE | Never deserialize untrusted data with `pickle` - use JSON instead |
+| Invisible Ink | Prototype Pollution (CVE-2018-16487) | Keep dependencies updated; `lodash@4.17.4` is dangerous |
+| Grade your Chatbot | LLM Prompt Injection | Don't put secrets in LLM context - treat prompts as user input |
 
 ---
 
